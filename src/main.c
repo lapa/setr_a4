@@ -54,6 +54,8 @@ const struct device *uart_dev = DEVICE_DT_GET(UART_NODE);
 static uint8_t rx_buf[RXBUF_SIZE];      /* RX buffer, to store received data */
 static uint8_t rx_chars[RXBUF_SIZE];    /* chars actually received  */
 volatile int uart_rxbuf_nchar=0;        /* Number of chars currrntly on the rx buffer */
+volatile uint16_t uart_rx_head = 0;
+volatile uint16_t uart_rx_tail = 0;
 
 /* UART callback function prototype */
 static void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data);
@@ -110,18 +112,18 @@ int main(void)
         /* Print string received so far. */
         /* Very basic implementation, just for showing the use of the API */
         /* E.g. it does not prevent race conditions with the callback!!!!*/
-        if(uart_rxbuf_nchar > 0) {
-            rx_chars[uart_rxbuf_nchar] = 0; /* Terminate the string */
-            uart_rxbuf_nchar = 0;           /* Reset counter */
-
-            sprintf(rep_mesg,"You typed [%s]\n\r",rx_chars);            
-            
-            err = uart_tx(uart_dev, rep_mesg, strlen(rep_mesg), SYS_FOREVER_MS);
-            if (err) {
-                printk("uart_tx() error. Error code:%d\n\r",err);
-                return FATAL_ERR;
-            }
-        }
+        //if(uart_rxbuf_nchar > 0) {
+        //    rx_chars[uart_rxbuf_nchar] = 0; /* Terminate the string */
+        //    uart_rxbuf_nchar = 0;           /* Reset counter */
+        //
+        //    sprintf(rep_mesg,"You typed [%s]\n\r",rx_chars);            
+        //    
+        //    err = uart_tx(uart_dev, rep_mesg, strlen(rep_mesg), SYS_FOREVER_MS);
+        //    if (err) {
+        //        printk("uart_tx() error. Error code:%d\n\r",err);
+        //        return FATAL_ERR;
+        //    }
+        //}
         //printk(".\n");
     }
  
@@ -145,15 +147,30 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
     	case UART_TX_ABORTED:
 	    	printk("UART_TX_ABORTED event \n\r");
 		    break;
-		
+    
 	    case UART_RX_RDY:
 		    printk("UART_RX_RDY event \n\r");
             /* Just copy data to a buffer. */
             /* Simple approach, just for illustration. In most cases it is necessary to use */
             /*    e.g. a FIFO or a circular buffer to communicate with a task that shall process the messages*/
-            memcpy(&rx_chars[uart_rxbuf_nchar],&(rx_buf[evt->data.rx.offset]),evt->data.rx.len); 
-            uart_rxbuf_nchar++;           
-		    break;
+            memcpy(&rx_chars[uart_rxbuf_nchar],&(rx_buf[evt->data.rx.offset]),evt->data.rx.len);
+            if(rx_chars[uart_rxbuf_nchar] == '!') {
+                uart_rxbuf_nchar++;
+                rx_chars[uart_rxbuf_nchar] = 0; /* Terminate the string */
+                printf("******* PRINTING COMMAND:\n");
+                for(uint16_t i = 0; i < uart_rxbuf_nchar; i++) {
+                    printf("%c\n", rx_chars[i]);
+                }
+                uint16_t res = validate_command(rx_chars);
+                printf("**** COMMAND VALIDATION RESULT: %d\n", res);
+                res = validate_checksum(rx_chars, uart_rxbuf_nchar);
+                printf("**** CHECKSUM VALIDATION RESULT: %d\n", res);
+                uart_rxbuf_nchar = 0; /* Reset counter */
+            } else {
+                printf("rx buffer: %s\n", rx_chars);
+                uart_rxbuf_nchar++;       
+            }
+            break;
 
 	    case UART_RX_BUF_REQUEST:
 		    printk("UART_RX_BUF_REQUEST event \n\r");
@@ -170,7 +187,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
             /* When the RX_BUFF becomes full RX is disabled automaticaly.  */
             /* It must be re-enabled manually for continuous reception */
             printk("UART_RX_DISABLED event \n\r");
-		    err =  uart_rx_enable(uart_dev ,rx_buf,sizeof(rx_buf),RX_TIMEOUT);
+		    err = uart_rx_enable(uart_dev ,rx_buf,sizeof(rx_buf),RX_TIMEOUT);
             if (err) {
                 printk("uart_rx_enable() error. Error code:%d\n\r",err);
                 exit(FATAL_ERR);                
