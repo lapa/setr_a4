@@ -11,12 +11,16 @@ int read_button(int id, int *res) {
     switch (id) {
 	case 0:
 	    but = but_0;
+	    break;
 	case 1:
 	    but = but_1;
+	    break;
 	case 2:
 	    but = but_2;
+	    break;
 	case 3:
 	    but = but_3;
+	    break;
     }
     *res = gpio_pin_get_dt(&but);
     return 0;

@@ -11,12 +11,16 @@ int toggle_led(int id) {
     switch (id) {
 	case 0:
 	    led = led_0;
+	    break;
 	case 1:
 	    led = led_1;
+	    break;
 	case 2:
 	    led = led_2;
+	    break;
 	case 3:
 	    led = led_3;
+	    break;
     }
     int state = gpio_pin_get_dt(&led);
     state = 1 - state;
@@ -32,12 +36,16 @@ int set_led(int id, int value) {
     switch (id) {
 	case 0:
 	    led = led_0;
+	    break;
 	case 1:
 	    led = led_1;
+	    break;
 	case 2:
 	    led = led_2;
+	    break;
 	case 3:
 	    led = led_3;
+	    break;
     }
     int ret = gpio_pin_set_dt(&led,value);
     if (ret < 0) {
@@ -51,12 +59,16 @@ void read_led(int id, int *res) {
     switch (id) {
 	case 0:
 	    led = led_0;
+	    break;
 	case 1:
 	    led = led_1;
+	    break;
 	case 2:
 	    led = led_2;
+	    break;
 	case 3:
 	    led = led_3;
+	    break;
     }
     *res = gpio_pin_get_dt(&led);
 }
