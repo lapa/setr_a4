@@ -58,24 +58,7 @@ void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
             memcpy(item_ptr->rx_chars, rx_buf, RXBUF_SIZE);
 
             k_fifo_put(&uart_fifo, item_ptr);
-
-
-            /* Allocate memory for the item struct */ 
-            //struct uart_data_item_t *item = k_malloc(sizeof(*item));
-            //__ASSERT_NO_MSG(item != NULL);
-
-            /* Allocate memory for data buffer inside the item */
-            //item->rx_chars = k_malloc(evt->data.rx.len);
-            //__ASSERT_NO_MSG(item-> != NULL);
-
-            //emcpy(item->rx_chars, &(rx_buf[evt->data.rx.offset]), evt->data.rx.len);
-
-            //item->rx_chars = evt->data.rx.len;
-
-            //k_fifo_put(&uart_fifo, item);
             
-            printf("OFFSET: %d\n", evt->data.rx.offset);
-            printf("LEN: %d\n", evt->data.rx.len);
             /* Just copy data to a buffer. */
             /* Simple approach, just for illustration. In most cases it is necessary to use */
             /*    e.g. a FIFO or a circular buffer to communicate with a task that shall process the messages*/
@@ -225,4 +208,22 @@ uint16_t validate_checksum(char *command, uint16_t rx_occupied_bytes) {
     }
     return CHECKSUM_MISMATCH;
 
+}
+
+void fifo_thread_code(void *argA , void *argB, void *argC) {
+   
+   struct uart_data_item_t *rx_data;
+
+    while(1) {
+
+        rx_data = k_fifo_get(&uart_fifo, K_FOREVER);
+
+        if(rx_data != NULL) {
+            printf("*** RX DATA DETECTED\n");
+            printf("RX BUFFER = %s\n", rx_data->rx_chars);
+            printf("RX BUFFER START = %d\n", rx_data->rx_buf_start);
+            printf("RX BUFFER END = %d\n", rx_data->rx_buf_end);       
+        }
+
+    }
 }

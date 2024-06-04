@@ -47,5 +47,6 @@ uint16_t uart_init();
 uint16_t uart_hello_message();
 uint16_t validate_command(char *command);
 uint16_t validate_checksum(char *command, uint16_t rx_occupied_bytes);
+void fifo_thread_code(void *argA , void *argB, void *argC);
 
 #endif

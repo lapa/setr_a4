@@ -22,15 +22,33 @@
 #include "UART/UART.h"
 #include "sensors/adc.h"
 
+#include <zephyr/kernel.h>          /* for kernel functions*/
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/timing/timing.h>   /* for timing services */
+
+/* Size of stack area used by each thread (can be thread specific, if necessary)*/
+#define STACK_SIZE 1024
+#define fifo_thread_priority 1 
+
+K_THREAD_STACK_DEFINE(fifo_thread_stack, STACK_SIZE);
+struct k_thread fifo_thread_data;
+k_tid_t fifo_thread_tid;
+
 /* Main function */
 int main(void)
 {
     
     /* UART initialization */
-    //uart_init();
-    //uart_hello_message();
+    uart_init();
 
-    configure_adc();
+    fifo_thread_tid = k_thread_create(&fifo_thread_data, fifo_thread_stack,
+        K_THREAD_STACK_SIZEOF(fifo_thread_stack), fifo_thread_code,
+        NULL, NULL, NULL, fifo_thread_priority, 0, K_NO_WAIT);
+
+    //configure_adc();
 
     /* Main loop */
     while(1) {
