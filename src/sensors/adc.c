@@ -21,11 +21,6 @@ K_THREAD_STACK_DEFINE(thread_ADC_stack, STACK_SIZE);
 struct k_thread thread_ADC_data;
 k_tid_t thread_ADC_tid;
 
-void read_adc(int *res_raw, int *res_an) {
-	*res_raw = adc_sample_buffer[0];
-	*res_an =  60 * 1000*adc_sample_buffer[0]*((float)3/1023) - 60;
-}
-
 int adc_sample(void)
 {
 	int ret;
@@ -57,8 +52,6 @@ void thread_ADC_code(void *argA, void *argB, void *argC) {
     timing_t start_time, end_time;
     uint64_t total_cycles=0;
     uint64_t total_ns=0;
-
-    printk("Thread A init (periodic)\n");
 
     /* Compute next release instant */
     release_time = k_uptime_get() + thread_ADC_period;

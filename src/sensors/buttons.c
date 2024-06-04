@@ -22,8 +22,6 @@ void thread_button_read_code(void *argA, void *argB, void *argC) {
     uint64_t total_cycles=0;
     uint64_t total_ns=0;
 
-    printk("Thread A init (periodic)\n");
-
     /* Compute next release instant */
     release_time = k_uptime_get() + thread_button_period;
 

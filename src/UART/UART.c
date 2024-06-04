@@ -46,10 +46,12 @@ void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 		    break;
     
 	    case UART_RX_RDY:
+            /* If input is equal to '#' we change the starting index of the command */
             if(rx_buf[evt->data.rx.offset] == SOF_SYM) {
                 uart_rxbuf_start = evt->data.rx.offset; 
             }
 
+            /* Storing buffer into FIFO */
             size_t FIFO_elem_size = sizeof(struct uart_data_item_t);
             struct uart_data_item_t *item_ptr;
 
@@ -122,6 +124,8 @@ uint16_t uart_init() {
         printk("uart_rx_enable() error. Error code:%d\n\r",err);
         return FATAL_ERR;
     }
+
+    printf("You can start sending commands!\n\r");
 
     return 1;
 }
@@ -201,37 +205,33 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
 
             command[command_len] = 0; /* Terminate the string */
 
-            printf("EXTRACTED COMMAND: %s\n", command);
+            printf("COMMAND: %s\n", command);
 
             if(validate_command(command) == VALID_COMMAND && validate_checksum(command, command_len) == CHECKSUM_MATCH) {
                 switch(command[1]) {
                     case 'B':
                         int res;
                         rtdb_read_button(command[2]-'0', &res);
-                        /* Use tx buf instead of printf */
-                        
-                        printf("BUTTON STATUS: %d\n", res);
+                        printf("BUTTON %c STATUS: %d\n", command[2], res);
                         break;
                     case 'L':
                         if(command_len == 7) {
                             int res;
                             rtdb_read_led(command[2]-'0', &res);
-                            /* Use tx buf instead of printf */
-                            printf("LED STATUS: %d\n", res);
+                            printf("LED %c STATUS: %d\n", command[2], res);
                         } else {
                             rtdb_set_led(command[2]-'0', command[3]-'0');
+                            printf("LED %c STATUS CHANGED TO %c\n", command[2], command[3]);
                         }
                         break;
                     case 'A':
                         if(command[2] == 'R') {
                             int raw;
                             rtdb_read_adc_raw(&raw);
-                            /* Use tx buf instead of printf */
                             printf("ADC RAW: %d\n", raw);
                         } else if(command[2] == 'V') {
                             int an;
                             rtdb_read_adc_an(&an);
-                            /* Use tx buf instead of printf */
                             printf("ADC VAL: %d\n", an);
                         }
                         break;

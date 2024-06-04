@@ -1,3 +1,16 @@
+/**
+ * @file leds.h
+ * @brief Functions for interacting with LEDs.
+ *
+ * This header file contains functions and definitions for configuring and
+ * controlling LEDs. It provides an interface to interact
+ * with specific LEDs defined by aliases (LED0, LED1, LED2, LED3).
+ *
+ * @author Diogo Lapa 117296
+ * @author Bruno Duarte 118326
+ * @date 04-06-2024
+ *
+ */
 
 #include "leds.h"
 
@@ -21,8 +34,6 @@ void thread_led_set_code(void *argA, void *argB, void *argC) {
     timing_t start_time, end_time;
     uint64_t total_cycles=0;
     uint64_t total_ns=0;
-
-    printk("Thread A init (periodic)\n");
 
     /* Compute next release instant */
     release_time = k_uptime_get() + thread_led_period;
