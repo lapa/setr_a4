@@ -7,11 +7,8 @@
 #ifndef __ADC_H__
 #define __ADC_H__
 
+#include "commons.h"
 
-#include <zephyr/kernel.h>          /* for k_msleep() */
-#include <zephyr/device.h>          /* for device_is_ready() and device structure */
-#include <zephyr/devicetree.h>	    /* for DT_NODELABEL() */
-#include <zephyr/drivers/gpio.h>    /* for GPIO API*/
 #include <zephyr/drivers/adc.h>     /* for ADC API*/
 #include <zephyr/sys/printk.h>      /* for printk()*/
 #include <string.h>
@@ -55,7 +52,7 @@
 //K_TIMER_DEFINE(thread_ADC_timer, NULL, NULL);
 
 int adc_sample(void);
-int read_value_adc(void);
+void read_value_adc(int *res_raw, int *res_an);
 int configure_adc(void);
 void thread_ADC_code(void *argA, void *argB, void *argC);
 
