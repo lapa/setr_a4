@@ -227,11 +227,6 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
                         //get button status
                         break;
                     case 'L':
-                        printf("***** CASE L\n");
-                        if(command[3] == '1' || command[3] == '0') {
-                            printf("***** LED CHANGED\n");
-                            set_led(command[2]-'0', command[3]-'0');
-                        }
                         //get or change led status
                         break;
                     case 'A':
