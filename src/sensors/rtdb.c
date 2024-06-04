@@ -1,6 +1,17 @@
 
 #include "rtdb.h"
 
+
+int leds[4];
+int buttons[4];
+int adc_raw;
+int adc_an_val;
+
+struct k_mutex leds_mutex[4];
+struct k_mutex buttons_mutex[4];
+struct k_mutex adc_raw_mutex;
+struct k_mutex adc_an_mutex;
+
 void rtdb_read_adc_raw(int *res) {
 	k_mutex_lock(&adc_raw_mutex, K_FOREVER);
 	*res = adc_raw;
