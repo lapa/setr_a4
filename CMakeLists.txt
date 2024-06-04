@@ -5,7 +5,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(SMART_IO)
 
-target_sources(app PRIVATE src/main.c src/command_processor/command_processor.c)
-target_include_directories(app PRIVATE src/command_processor)
+target_sources(app PRIVATE src/main.c src/UART/UART.c src/sensors/adc.c)
+target_include_directories(app PRIVATE src/UART src/sensors)
 #target_sources(app PRIVATE src/main.c src/sensors/adc.c src/sensors/leds.c)
 #target_include_directories(app PRIVATE src/sensors)
