@@ -7,11 +7,8 @@
 #ifndef __ADC_H__
 #define __ADC_H__
 
+#include "commons.h"
 
-#include <zephyr/kernel.h>          /* for k_msleep() */
-#include <zephyr/device.h>          /* for device_is_ready() and device structure */
-#include <zephyr/devicetree.h>	    /* for DT_NODELABEL() */
-#include <zephyr/drivers/gpio.h>    /* for GPIO API*/
 #include <zephyr/drivers/adc.h>     /* for ADC API*/
 #include <zephyr/sys/printk.h>      /* for printk()*/
 #include <string.h>

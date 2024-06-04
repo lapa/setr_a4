@@ -9,10 +9,7 @@
 #ifndef __LEDS_H__
 #define __LEDS_H__
 
-#include <zephyr/kernel.h>          /* for k_msleep() */
-#include <zephyr/device.h>          /* for device_is_ready() and device structure */
-#include <zephyr/devicetree.h>		/* for DT_NODELABEL() */
-#include <zephyr/drivers/gpio.h>    /* for GPIO api*/
+#include "commons.h"
 
 #define LED0_NODE DT_ALIAS(led0)
 #define LED1_NODE DT_ALIAS(led1)

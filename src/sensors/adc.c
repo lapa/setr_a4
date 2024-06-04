@@ -74,6 +74,7 @@ void thread_ADC_code(void *argA, void *argB, void *argC) {
             else {
                 /* ADC is set to use gain of 1/4 and reference VDD/4, so input range is 0...VDD (3 V), with 10 bit resolution */
                 printk("adc reading: raw:%4u / %4u mV: \n\r",adc_sample_buffer[0],(uint16_t)(1000*adc_sample_buffer[0]*((float)3/1023)));
+                printk("The AN value is: %4u", 60 * 1000*adc_sample_buffer[0]*((float)3/1023)- 60);
             }
         }
         end_time = timing_counter_get();

@@ -10,11 +10,7 @@
 #ifndef __BUTTONS_H__
 #define __BUTTONS_H__
 
-#include <zephyr/kernel.h>          /* for k_msleep() */
-#include <zephyr/device.h>          /* for device_is_ready() and device structure */
-#include <zephyr/devicetree.h>		/* for DT_NODELABEL() */
-#include <zephyr/drivers/gpio.h>    /* for GPIO api*/
-
+#include "commons.h"
 
 #define BUT0_NODE DT_ALIAS(sw0)
 #define BUT1_NODE DT_ALIAS(sw1)
