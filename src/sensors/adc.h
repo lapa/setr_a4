@@ -7,6 +7,17 @@
 #ifndef __ADC_H__
 #define __ADC_H__
 
+
+#include <zephyr/kernel.h>          /* for k_msleep() */
+#include <zephyr/device.h>          /* for device_is_ready() and device structure */
+#include <zephyr/devicetree.h>	    /* for DT_NODELABEL() */
+#include <zephyr/drivers/gpio.h>    /* for GPIO API*/
+#include <zephyr/drivers/adc.h>     /* for ADC API*/
+#include <zephyr/sys/printk.h>      /* for printk()*/
+#include <string.h>
+#include <zephyr/timing/timing.h>   /* for timing services */
+/*ADC definitions and includes*/
+#include <hal/nrf_saadc.h>
 /*
  * ADC defines
  * */
@@ -43,7 +54,7 @@
 #define thread_ADC_period 1000
 //K_TIMER_DEFINE(thread_ADC_timer, NULL, NULL);
 
-static int adc_sample(void);
+int adc_sample(void);
 int read_value_adc(void);
 int configure_adc(void);
 void thread_ADC_code(void *argA, void *argB, void *argC);

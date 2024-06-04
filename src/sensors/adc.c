@@ -21,7 +21,7 @@ K_THREAD_STACK_DEFINE(thread_ADC_stack, STACK_SIZE);
 struct k_thread thread_ADC_data;
 k_tid_t thread_ADC_tid;
 
-static int adc_sample(void)
+int adc_sample(void)
 {
 	int ret;
 	const struct adc_sequence sequence = {
@@ -89,7 +89,7 @@ void thread_ADC_code(void *argA, void *argB, void *argC) {
         }
 
         /* Update next release time instant*/
-        release_time += thread_A_period;
+        release_time += thread_ADC_period;
 
         //k_msleep(TIMER_INTERVAL_MSEC);
     }
