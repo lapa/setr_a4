@@ -31,4 +31,23 @@ int configure_buttons(void) {
 		return ERR_RDY;
 	}
 
+    int ret = 0;
+    
+    ret = gpio_pin_configure_dt(&but_0, GPIO_INPUT);
+    if(ret < 0) {
+    	return 0;
+    }
+    ret = gpio_pin_configure_dt(&but_1, GPIO_INPUT);
+    if(ret < 0) {
+    	return 0;
+    }
+    ret = gpio_pin_configure_dt(&but_2, GPIO_INPUT);
+    if(ret < 0) {
+    	return 0;
+    }
+    ret = gpio_pin_configure_dt(&but_3, GPIO_INPUT);
+    if(ret < 0) {
+    	return 0;
+    }
+
 }
