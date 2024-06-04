@@ -1,4 +1,5 @@
 #include "UART.h"
+#include "../sensors/leds.h"
 
 /* UART related variables */
 const struct device *uart_dev = DEVICE_DT_GET(UART_NODE);
@@ -218,13 +219,19 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
 
             command[command_len] = 0; /* Terminate the string */
 
+            printf("EXTRACTED COMMAND: %s\n", command);
+
             if(validate_command(command) == VALID_COMMAND && validate_checksum(command, command_len) == CHECKSUM_MATCH) {
                 switch(command[1]) {
                     case 'B':
                         //get button status
                         break;
                     case 'L':
-                        
+                        printf("***** CASE L\n");
+                        if(command[3] == '1' || command[3] == '0') {
+                            printf("***** LED CHANGED\n");
+                            set_led(command[2]-'0', command[3]-'0');
+                        }
                         //get or change led status
                         break;
                     case 'A':

@@ -63,7 +63,7 @@ int main(void)
 
     //configure_adc();
     configure_leds();
-    configure_buttons();
+    //configure_buttons();
 
     /* Main loop */
     //while(1) {
