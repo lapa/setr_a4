@@ -10,16 +10,24 @@
 #define __LEDS_H__
 
 
+#define LED0_NODE DT_ALIAS(led0)
+#define LED1_NODE DT_ALIAS(led1)
+#define LED2_NODE DT_ALIAS(led2)
+#define LED3_NODE DT_ALIAS(led3)
 /**
  * @brief Sets the value of a specific LED
  *
  */
 int set_led(int id);
 
+/**
+ * @brief Reads the value of a specific LED and returns it
+ */
+int read_leds(int id, int *res)
 
 /**
  * @brief Reads the value of a specific LED and returns it
  */
-int init_led(int id, int *res);
+int configure_leds(void);
 #endif
 

@@ -10,6 +10,12 @@
 #ifndef __BUTTONS_H__
 #define __BUTTONS_H__
 
+
+#define BUT0_NODE DT_ALIAS(sw0)
+#define BUT1_NODE DT_ALIAS(sw1)
+#define BUT2_NODE DT_ALIAS(sw2)
+#define BUT3_NODE DT_ALIAS(sw3)
+
 /**
  * @brief Reads the value of a specific LED and returns it
  */
@@ -20,7 +26,7 @@ int read_button(int id, int *res);
  * @brief Sets the value of a specific LED
  *
  */
-int init_buttons(int id);
+int configure_buttons(void);
 
 #endif
 
