@@ -27,19 +27,9 @@
 #define BUFFER_SIZE 1
 
 #define ADC_NODE DT_NODELABEL(adc)  
-const struct device *adc_dev = DEVICE_DT_GET(ADC_NODE);	
 
 /* Other defines */
 #define TIMER_INTERVAL_MSEC 1000 /* Interval between ADC samples */
-
-/* ADC channel configuration */
-static const struct adc_channel_cfg my_channel_cfg = {
-	.gain = ADC_GAIN,
-	.reference = ADC_REFERENCE,
-	.acquisition_time = ADC_ACQUISITION_TIME,
-	.channel_id = ADC_CHANNEL_ID,
-	.input_positive = ADC_CHANNEL_INPUT
-};
 
 /* Error codes */
 #define ERR_OK 0        // All fine
