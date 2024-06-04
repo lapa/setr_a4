@@ -8,9 +8,4 @@
 #include <zephyr/drivers/gpio.h>    /* for GPIO api*/
 #include <zephyr/drivers/adc.h>     /* for ADC API*/
 
-#include <zephyr/sys/printk.h>      /* for printk()*/
-#include <string.h>
-#include <zephyr/timing/timing.h>   /* for timing services */
-/*ADC definitions and includes*/
-#include <hal/nrf_saadc.h>
 #endif
