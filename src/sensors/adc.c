@@ -21,6 +21,11 @@ K_THREAD_STACK_DEFINE(thread_ADC_stack, STACK_SIZE);
 struct k_thread thread_ADC_data;
 k_tid_t thread_ADC_tid;
 
+void read_adc(int *res_raw, int *res_an) {
+	*res_raw = adc_sample_buffer[0];
+	*res_an =  60 * 1000*adc_sample_buffer[0]*((float)3/1023) - 60;
+}
+
 int adc_sample(void)
 {
 	int ret;

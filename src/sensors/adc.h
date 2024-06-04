@@ -52,7 +52,7 @@
 //K_TIMER_DEFINE(thread_ADC_timer, NULL, NULL);
 
 int adc_sample(void);
-int read_value_adc(void);
+void read_value_adc(int *res_raw, int *res_an);
 int configure_adc(void);
 void thread_ADC_code(void *argA, void *argB, void *argC);
 
