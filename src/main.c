@@ -21,7 +21,8 @@
 /* Includes. Add according to the resources used  */
 #include "UART/UART.h"
 #include "sensors/adc.h"
-#include "sensors/leds.c"
+#include "sensors/leds.h"
+#include "sensors/buttons.h"
 
 #include <zephyr/kernel.h>          /* for kernel functions*/
 #include <zephyr/device.h>
@@ -51,6 +52,7 @@ int main(void)
 
     //configure_adc();
     configure_leds();
+    configure_buttons();
 
     /* Main loop */
     while(1) {
