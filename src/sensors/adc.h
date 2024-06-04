@@ -9,6 +9,9 @@
 
 #include "common.h"
 
+/*
+ * ADC defines
+ * */
 
 #define ADC_RESOLUTION 10
 #define ADC_GAIN ADC_GAIN_1_4
@@ -42,14 +45,19 @@ static const struct adc_channel_cfg my_channel_cfg = {
 #define ERR_OK 0        // All fine
 #define ERR_CONFIG -1   // Fail at set-up
 
+/* 
+ * Thread defines
+ *
+ * */
 
-/* Global vars */
-struct k_timer my_timer;
-static uint16_t adc_sample_buffer[BUFFER_SIZE];
+#define STACK_SIZE 1024
+#define thread_ADC_prio 1 /* Higher priority */     
+#define thread_ADC_period 1000
+//K_TIMER_DEFINE(thread_ADC_timer, NULL, NULL);
 
 static int adc_sample(void);
 int read_value_adc(void);
 int configure_adc(void);
-
+void thread_ADC_code(void *argA, void *argB, void *argC);
 
 #endif 

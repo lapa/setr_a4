@@ -9,11 +9,6 @@
 #ifndef __LEDS_H__
 #define __LEDS_H__
 
-/**
- * @brief Reads the value of a specific LED and returns it
- */
-int read_led(int id, int *res);
-
 
 /**
  * @brief Sets the value of a specific LED
@@ -21,5 +16,10 @@ int read_led(int id, int *res);
  */
 int set_led(int id);
 
+
+/**
+ * @brief Reads the value of a specific LED and returns it
+ */
+int init_led(int id, int *res);
 #endif
 
