@@ -1,5 +1,7 @@
 #include "UART.h"
 #include "../sensors/leds.h"
+#include "../sensors/adc.h"
+#include "../sensors/buttons.h"
 
 /* UART related variables */
 const struct device *uart_dev = DEVICE_DT_GET(UART_NODE);
@@ -21,7 +23,7 @@ const struct uart_config uart_cfg = {
 
 /* Command processing variables */
 static regex_t regex;
-static char* command_pattern = "^#(B[1-4]|L([1-4]|[1-4][0-1])|A(R|V))(2[5][0-5]|2[0-4][0-9]|[0-1][0-9]{2})!$";
+static char* command_pattern = "^#(B[0-3]|L([0-3]|[0-3][0-1])|A(R|V))(2[5][0-5]|2[0-4][0-9]|[0-1][0-9]{2})!$";
 
 K_FIFO_DEFINE(uart_fifo);
 
@@ -40,12 +42,9 @@ void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
             break;
 
     	case UART_TX_ABORTED:
-	    	printk("UART_TX_ABORTED event \n\r");
 		    break;
     
 	    case UART_RX_RDY:
-		    printk("UART_RX_RDY event \n\r");
-
             if(rx_buf[evt->data.rx.offset] == SOF_SYM) {
                 uart_rxbuf_start = evt->data.rx.offset; 
             }
@@ -63,20 +62,17 @@ void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
             break;
 
 	    case UART_RX_BUF_REQUEST:
-		    printk("UART_RX_BUF_REQUEST event \n\r");
             /* Should be used to allow continuous reception */
             /* To this end, declare at least two buffers and switch among them here */
             /*      using function uart_rx_buf_rsp() */
 		    break;
 
 	    case UART_RX_BUF_RELEASED:
-		    printk("UART_RX_BUF_RELEASED event \n\r");
 		    break;
 		
 	    case UART_RX_DISABLED: 
             /* When the RX_BUFF becomes full RX is disabled automaticaly.  */
             /* It must be re-enabled manually for continuous reception */
-            printk("UART_RX_DISABLED event \n\r");
 		    err = uart_rx_enable(uart_dev ,rx_buf,sizeof(rx_buf),RX_TIMEOUT);
             if (err) {
                 printk("uart_rx_enable() error. Error code:%d\n\r",err);
@@ -85,11 +81,10 @@ void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 		    break;
 
 	    case UART_RX_STOPPED:
-		    printk("UART_RX_STOPPED event \n\r");
 		    break;
 		
 	    default:
-            printk("UART: unknown event \n\r");
+            printk("UART: Unknown event \n\r");
 		    break;
     }
 
@@ -130,13 +125,13 @@ uint16_t uart_init() {
     return 1;
 }
 
-uint16_t uart_hello_message() {
+uint16_t uart_tx_message(uint8_t message[]) {
     int err = 0; /* Generic error variable */
-    uint8_t welcome_mesg[] = "TYPE A COMMAND!!!\n\r"; 
+    //uint8_t welcome_mesg[] = "TYPE A COMMAND!!!\n\r"; 
 
      /* Send a welcome message */ 
     /* Last arg is timeout. Only relevant if flow controll is used */
-    err = uart_tx(uart_dev, welcome_mesg, sizeof(welcome_mesg), SYS_FOREVER_MS);
+    err = uart_tx(uart_dev, message, sizeof(message), SYS_FOREVER_MS);
     if (err) {
         printk("uart_tx() error. Error code:%d\n\r",err);
         return FATAL_ERR;
@@ -224,18 +219,33 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
             if(validate_command(command) == VALID_COMMAND && validate_checksum(command, command_len) == CHECKSUM_MATCH) {
                 switch(command[1]) {
                     case 'B':
-                        //get button status
+                        int res;
+                        read_button(command[2]-'0', &res);
+                        /* Use tx buf instead of printf */
+                        
+                        printf("BUTTON STATUS: %d\n", res);
                         break;
                     case 'L':
-                        printf("***** CASE L\n");
-                        if(command[3] == '1' || command[3] == '0') {
-                            printf("***** LED CHANGED\n");
+                        if(command_len == 7) {
+                            int res;
+                            read_led(command[2]-'0', &res);
+                            /* Use tx buf instead of printf */
+                            printf("LED STATUS: %d\n", res);
+                        } else {
                             set_led(command[2]-'0', command[3]-'0');
                         }
-                        //get or change led status
                         break;
                     case 'A':
-                        //get raw or val adc value
+                        int raw;
+                        int val;
+                        read_adc(&raw, &val);
+                        if(command[2] == 'R') {
+                            /* Use tx buf instead of printf */
+                            printf("ADC RAW: %d", raw);
+                        } else if(command[2] == 'V') {
+                            /* Use tx buf instead of printf */
+                            printf("ADC VAL: %d", val);
+                        }
                         break;
                     default:
                         printf("INVALID COMMAND!\n");
