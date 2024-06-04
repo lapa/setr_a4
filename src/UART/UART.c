@@ -227,12 +227,12 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
                             int raw;
                             rtdb_read_adc_raw(&raw);
                             /* Use tx buf instead of printf */
-                            printf("ADC RAW: %d", raw);
+                            printf("ADC RAW: %d\n", raw);
                         } else if(command[2] == 'V') {
                             int an;
                             rtdb_read_adc_an(&an);
                             /* Use tx buf instead of printf */
-                            printf("ADC VAL: %d", an);
+                            printf("ADC VAL: %d\n", an);
                         }
                         break;
                     default:

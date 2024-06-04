@@ -50,7 +50,7 @@ int main(void)
         K_THREAD_STACK_SIZEOF(fifo_thread_stack), fifo_thread_code,
         NULL, NULL, NULL, fifo_thread_priority, 0, K_NO_WAIT);
 
-    //configure_adc();
+    configure_adc();
     configure_leds();
     configure_buttons();
 

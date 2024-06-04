@@ -42,7 +42,7 @@ void rtdb_set_adc_raw(int value) {
 	k_mutex_unlock(&adc_raw_mutex);
 }
 
-void rtdb_set_adc_an_val(int value) {
+void rtdb_set_adc_an(int value) {
 	k_mutex_lock(&adc_an_mutex, K_FOREVER);
 	adc_an_val = value;
 	k_mutex_unlock(&adc_an_mutex);

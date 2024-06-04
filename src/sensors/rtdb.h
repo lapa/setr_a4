@@ -12,7 +12,7 @@
 //Vamos ter que definir os mutexes e as estruturas onde os dados estarão guardados
 
 void rtdb_read_adc_raw(int *res);
-void rtdb_read_adc_an_val(int *res);
+void rtdb_read_adc_an(int *res);
 void rtdb_read_led(int id, int *res);
 void rtdb_read_button(int id, int *res);
 
