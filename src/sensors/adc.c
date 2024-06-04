@@ -81,7 +81,7 @@ void thread_ADC_code(void *argA, void *argB, void *argC) {
                 //printk("adc reading: raw:%4u / %4u mV: \n\r",adc_sample_buffer[0],(uint16_t)(1000*adc_sample_buffer[0]*((float)3/1023)));
                 //printk("The AN value is: %4u", 60 * 1000*adc_sample_buffer[0]*((float)3/1023)- 60);
 		rtdb_set_adc_raw(adc_sample_buffer[0]);
-		rtdb_set_adc_an(adc_sample_buffer[0] * 60 - 60);
+		rtdb_set_adc_an((int) (1000*adc_sample_buffer[0] * ((float)3/1023)));
 		//ESCREVE NOS DADOS
             }
         }

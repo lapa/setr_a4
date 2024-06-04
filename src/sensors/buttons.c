@@ -29,17 +29,17 @@ void thread_button_read_code(void *argA, void *argB, void *argC) {
 
     while(true){
         /* Get one sample, checks for errors and prints the values */
-	start_time = timing_counter_get(); 
+        start_time = timing_counter_get(); 
 
-	int res = 0;
-    	res = gpio_pin_get_dt(&but_0);    
-	rtdb_set_button(0, res);
-    	res = gpio_pin_get_dt(&but_1);    
-	rtdb_set_button(1, res);
-    	res = gpio_pin_get_dt(&but_2);    
-	rtdb_set_button(2, res);
-    	res = gpio_pin_get_dt(&but_3);    
-	rtdb_set_button(3, res);
+        int res = 0;
+            res = gpio_pin_get_dt(&but_0);    
+        rtdb_set_button(0, res);
+            res = gpio_pin_get_dt(&but_1);    
+        rtdb_set_button(1, res);
+            res = gpio_pin_get_dt(&but_2);    
+        rtdb_set_button(2, res);
+            res = gpio_pin_get_dt(&but_3);    
+        rtdb_set_button(3, res);
 
 
         end_time = timing_counter_get();
