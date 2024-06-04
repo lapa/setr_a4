@@ -5,7 +5,7 @@ const struct device *uart_dev = DEVICE_DT_GET(UART_NODE);
 static uint8_t rx_buf[RXBUF_SIZE];        /* RX buffer, to store received data */
 //static uint8_t rx_chars[RXBUF_SIZE];    /* chars actually received  */
 volatile int uart_rxbuf_nchar = 0;        /* Number of chars currrntly on the rx buffer */
-volatile int uart_rxbuf_start = -1;
+volatile int uart_rxbuf_start = 0;
 
 /* Struct for UART configuration. If using default values (check devicetree info) is not needed) */
 /* Dynamic configuration option, available if CONFIG_UART_USE_RUNTIME_CONFIGURE is ser (it is by defualt)*/
@@ -20,7 +20,7 @@ const struct uart_config uart_cfg = {
 
 /* Command processing variables */
 static regex_t regex;
-static char* command_pattern = "^#(A|P[THC]|L|L[THC]|R|R[THC])(2[5][0-5]|2[0-4][0-9]|[0-1][0-9]{2})!$";
+static char* command_pattern = "^#(B[1-4]|L([1-4]|[1-4][0-1])|A(R|V))(2[5][0-5]|2[0-4][0-9]|[0-1][0-9]{2})!$";
 
 K_FIFO_DEFINE(uart_fifo);
 
@@ -45,8 +45,8 @@ void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 	    case UART_RX_RDY:
 		    printk("UART_RX_RDY event \n\r");
 
-            if(uart_rxbuf_start == -1) {
-                uart_rxbuf_start = evt->data.rx.offset;
+            if(rx_buf[evt->data.rx.offset] == SOF_SYM) {
+                uart_rxbuf_start = evt->data.rx.offset; 
             }
 
             size_t FIFO_elem_size = sizeof(struct uart_data_item_t);
@@ -59,26 +59,6 @@ void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 
             k_fifo_put(&uart_fifo, item_ptr);
             
-            /* Just copy data to a buffer. */
-            /* Simple approach, just for illustration. In most cases it is necessary to use */
-            /*    e.g. a FIFO or a circular buffer to communicate with a task that shall process the messages*/
-            /*memcpy(&rx_chars[uart_rxbuf_nchar],&(rx_buf[evt->data.rx.offset]),evt->data.rx.len);
-            if(rx_chars[uart_rxbuf_nchar] == '!') {
-                uart_rxbuf_nchar++;
-                rx_chars[uart_rxbuf_nchar] = 0;
-                printf("******* PRINTING COMMAND:\n");
-                for(uint16_t i = 0; i < uart_rxbuf_nchar; i++) {
-                    printf("%c\n", rx_chars[i]);
-                }
-                uint16_t res = validate_command(rx_chars);
-                printf("**** COMMAND VALIDATION RESULT: %d\n", res);
-                res = validate_checksum(rx_chars, uart_rxbuf_nchar);
-                printf("**** CHECKSUM VALIDATION RESULT: %d\n", res);
-                uart_rxbuf_nchar = 0;
-            } else {
-                printf("rx buffer: %s\n", rx_chars);
-                uart_rxbuf_nchar++;       
-            }*/
             break;
 
 	    case UART_RX_BUF_REQUEST:
@@ -181,7 +161,7 @@ uint16_t validate_command(char *command) {
 }
 
 uint16_t validate_checksum(char *command, uint16_t rx_occupied_bytes) {
-    
+
     uint16_t start_commandsum = 1;
     uint16_t end_commandsum = rx_occupied_bytes - 5;
     uint16_t start_checksum = rx_occupied_bytes - 4;
@@ -219,10 +199,44 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
         rx_data = k_fifo_get(&uart_fifo, K_FOREVER);
 
         if(rx_data != NULL) {
-            printf("*** RX DATA DETECTED\n");
-            printf("RX BUFFER = %s\n", rx_data->rx_chars);
-            printf("RX BUFFER START = %d\n", rx_data->rx_buf_start);
-            printf("RX BUFFER END = %d\n", rx_data->rx_buf_end);       
+
+
+            /* Extract command from buffer */
+            uint16_t command_len;
+
+            if(rx_data->rx_buf_end >= rx_data->rx_buf_start) {
+                command_len = (rx_data->rx_buf_end - rx_data->rx_buf_start + 1); 
+            } else {
+                command_len = (RXBUF_SIZE - rx_data->rx_buf_start + rx_data->rx_buf_end + 1); 
+            }
+
+            uint8_t *command = (uint8_t *)malloc(command_len + 1);
+
+            for(int i = 0; i < command_len; i++) {
+                command[i] = rx_data->rx_chars[(rx_data->rx_buf_start + i) % RXBUF_SIZE];
+            }
+
+            command[command_len] = 0; /* Terminate the string */
+
+            if(validate_command(command) == VALID_COMMAND && validate_checksum(command, command_len) == CHECKSUM_MATCH) {
+                switch(command[1]) {
+                    case 'B':
+                        //get button status
+                        break;
+                    case 'L':
+                        
+                        //get or change led status
+                        break;
+                    case 'A':
+                        //get raw or val adc value
+                        break;
+                    default:
+                        printf("INVALID COMMAND!\n");
+                        break;
+                }
+            }
+
+            k_free(rx_data); 
         }
 
     }

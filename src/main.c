@@ -37,6 +37,17 @@ K_THREAD_STACK_DEFINE(fifo_thread_stack, STACK_SIZE);
 struct k_thread fifo_thread_data;
 k_tid_t fifo_thread_tid;
 
+/* RTDB variables */
+bool *rtdb_led1 = false;
+bool *rtdb_led2 = false;
+bool *rtdb_led3 = false;
+/*rtdb_led4 = false
+rtdb_but1 = false
+rtdb_but2 = false
+rtdb_but3 = false
+rtdb_but4 = false
+*/
+
 /* Main function */
 int main(void)
 {
@@ -51,8 +62,8 @@ int main(void)
     //configure_adc();
 
     /* Main loop */
-    while(1) {
-        k_msleep(MAIN_SLEEP_TIME_MS);
+    //while(1) {
+    //    k_msleep(MAIN_SLEEP_TIME_MS);
         
         /* Print string received so far. */
         /* Very basic implementation, just for showing the use of the API */
@@ -70,6 +81,6 @@ int main(void)
         //    }
         //}
         //printk(".\n");
-    }
+    //}
  
 }
