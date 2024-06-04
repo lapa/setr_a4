@@ -78,8 +78,10 @@ void thread_ADC_code(void *argA, void *argB, void *argC) {
             }
             else {
                 /* ADC is set to use gain of 1/4 and reference VDD/4, so input range is 0...VDD (3 V), with 10 bit resolution */
-                printk("adc reading: raw:%4u / %4u mV: \n\r",adc_sample_buffer[0],(uint16_t)(1000*adc_sample_buffer[0]*((float)3/1023)));
-                printk("The AN value is: %4u", 60 * 1000*adc_sample_buffer[0]*((float)3/1023)- 60);
+                //printk("adc reading: raw:%4u / %4u mV: \n\r",adc_sample_buffer[0],(uint16_t)(1000*adc_sample_buffer[0]*((float)3/1023)));
+                //printk("The AN value is: %4u", 60 * 1000*adc_sample_buffer[0]*((float)3/1023)- 60);
+		rtdb_set_adc_raw(adc_sample_buffer[0]);
+		rtdb_set_adc_an(adc_sample_buffer[0] * 60 - 60);
 		//ESCREVE NOS DADOS
             }
         }

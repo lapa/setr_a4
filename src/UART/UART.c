@@ -2,6 +2,7 @@
 #include "../sensors/leds.h"
 #include "../sensors/adc.h"
 #include "../sensors/buttons.h"
+#include "../sensors/rtdb.h"
 
 /* UART related variables */
 const struct device *uart_dev = DEVICE_DT_GET(UART_NODE);
@@ -125,20 +126,6 @@ uint16_t uart_init() {
     return 1;
 }
 
-uint16_t uart_tx_message(uint8_t message[]) {
-    int err = 0; /* Generic error variable */
-    //uint8_t welcome_mesg[] = "TYPE A COMMAND!!!\n\r"; 
-
-     /* Send a welcome message */ 
-    /* Last arg is timeout. Only relevant if flow controll is used */
-    err = uart_tx(uart_dev, message, sizeof(message), SYS_FOREVER_MS);
-    if (err) {
-        printk("uart_tx() error. Error code:%d\n\r",err);
-        return FATAL_ERR;
-    }
-    return 1;
-}
-
 uint16_t validate_command(char *command) {
     
     uint16_t ret = regcomp(&regex, command_pattern, REG_EXTENDED);
@@ -220,7 +207,7 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
                 switch(command[1]) {
                     case 'B':
                         int res;
-                        read_button(command[2]-'0', &res);
+                        rtdb_read_button(command[2]-'0', &res);
                         /* Use tx buf instead of printf */
                         
                         printf("BUTTON STATUS: %d\n", res);
@@ -228,23 +215,24 @@ void fifo_thread_code(void *argA , void *argB, void *argC) {
                     case 'L':
                         if(command_len == 7) {
                             int res;
-                            read_led(command[2]-'0', &res);
+                            rtdb_read_led(command[2]-'0', &res);
                             /* Use tx buf instead of printf */
                             printf("LED STATUS: %d\n", res);
                         } else {
-                            set_led(command[2]-'0', command[3]-'0');
+                            rtdb_set_led(command[2]-'0', command[3]-'0');
                         }
                         break;
                     case 'A':
-                        int raw;
-                        int val;
-                        read_adc(&raw, &val);
                         if(command[2] == 'R') {
+                            int raw;
+                            rtdb_read_adc_raw(&raw);
                             /* Use tx buf instead of printf */
                             printf("ADC RAW: %d", raw);
                         } else if(command[2] == 'V') {
+                            int an;
+                            rtdb_read_adc_an(&an);
                             /* Use tx buf instead of printf */
-                            printf("ADC VAL: %d", val);
+                            printf("ADC VAL: %d", an);
                         }
                         break;
                     default:

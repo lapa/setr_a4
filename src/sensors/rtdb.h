@@ -7,6 +7,8 @@
 #include "adc.h"
 #include "leds.h"
 #include "buttons.h"
+#include <zephyr/kernel.h>
+
 
 //Vamos ter que definir os mutexes e as estruturas onde os dados estarão guardados
 
@@ -15,11 +17,18 @@ int buttons[4];
 int adc_raw;
 int adc_an_val;
 
-void read_adc_raw(int *res);
-void read_adc_an_val(int *res);
-void read_led(int id, int *res);
-void read_button(int id, int *res);
+struct k_mutex leds_mutex[4];
+struct k_mutex buttons_mutex[4];
+struct k_mutex adc_raw_mutex;
+struct k_mutex adc_an_mutex;
 
-void set_adc_raw(int value);
-void set_adc_an(int value);
-void set_led(int id, int value);
+
+void rtdb_read_adc_raw(int *res);
+void rtdb_read_adc_an_val(int *res);
+void rtdb_read_led(int id, int *res);
+void rtdb_read_button(int id, int *res);
+
+void rtdb_set_adc_raw(int value);
+void rtdb_set_adc_an(int value);
+void rtdb_set_led(int id, int value);
+void rtdb_set_button(int id, int value);
