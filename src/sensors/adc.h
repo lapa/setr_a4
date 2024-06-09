@@ -53,7 +53,7 @@
  * */
 
 #define STACK_SIZE 1024
-#define thread_ADC_prio 3 
+#define thread_ADC_prio 2 
 #define thread_ADC_period 1000
 //K_TIMER_DEFINE(thread_ADC_timer, NULL, NULL);
 

@@ -20,7 +20,7 @@ const struct gpio_dt_spec led_2 = GPIO_DT_SPEC_GET(LED2_NODE,gpios);
 const struct gpio_dt_spec led_3 = GPIO_DT_SPEC_GET(LED3_NODE,gpios);
 
 #define STACK_SIZE 1024
-#define thread_led_prio 2 
+#define thread_led_prio 3 
 #define thread_led_period 1000
 K_THREAD_STACK_DEFINE(thread_led_stack, STACK_SIZE);
 struct k_thread thread_led_data;
